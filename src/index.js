@@ -3,22 +3,17 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 class Square extends React.Component {
-  // stateの初期値をconstructorで定義
-  constructor(props){
-    // React.Componentクラスを継承しているのでsuperで親クラスのconstructorを呼んでやる必要がある
-    super(props);
-    this.state = {
-      value: null,
-    };
-  }
-
   render() {
     return (
       // 渡されたpropsからvalueを表示している
       // onClickでクリックされた時のイベントを定義
       // setStateでstateの値を更新する
-      <button className="square" onClick={ () => this.setState({ value: 'X' }) }>
-        {this.state.value}
+      <button
+        className="square"
+        // クリックされた時に親のonClickを呼び出すようにする
+        onClick={() => this.props.onClick()}
+      >
+        {this.props.value}
       </button>
     );
   }
@@ -33,9 +28,20 @@ class Board extends React.Component {
     };
   }
 
+  handleClick(i){
+    const squares = this.state.squares.slice();
+    squares[i] = 'X';
+    this.setState({ squares: squares });
+  }
+
   renderSquare(i) {
-    // ここでprops として value という名前の値を Square に渡すようにしている
-    return <Square value={i}/>;
+    // ここでprops として 自分のstateのsquearesで子のstateを管理する
+    // SquareにはvalueとonClickをpropsとして渡している
+    return <Square
+              value={ this.state.squares[i] }
+              // onClickが呼ばれた時にhandleClickという関数を呼び出す
+              onClick={ () => this.handleClick(i) }
+            />;
   }
 
   render() {
