@@ -2,21 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-class Square extends React.Component {
-  render() {
-    return (
-      // 渡されたpropsからvalueを表示している
-      // onClickでクリックされた時のイベントを定義
-      // setStateでstateの値を更新する
-      <button
-        className="square"
-        // クリックされた時に親のonClickを呼び出すようにする
-        onClick={() => this.props.onClick()}
-      >
-        {this.props.value}
-      </button>
-    );
-  }
+// 自身でstateの管理をしなくなったので関数コンポーネントとして定義
+function Square(props) {
+  return (
+    // onClickでクリックされた時のイベントを定義
+    // クリックされた時に親のonClickを呼び出すようにする
+    <button className="square" onClick={props.onClick}>
+      {props.value}
+    </button>
+  );
 }
 
 class Board extends React.Component {
