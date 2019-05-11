@@ -55,12 +55,13 @@ class Game extends React.Component {
       history: [{
         squares: Array(9).fill(null),
       }],
+      stepNumber: 0,
       xIsNext: true,
     };
   }
 
   handleClick(i) {
-    const history = this.state.history;
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
     if (calculateWinner(squares) || squares[i]) {
@@ -73,14 +74,23 @@ class Game extends React.Component {
       history: history.concat([{
         squares: squares,
       }]),
+      stepNumber: history.length,
       // 真偽値を逆に更新する
       xIsNext: !this.state.xIsNext,
     });
   }
 
+  jumpTo(step) {
+    // 実行されたらsetStateでstateを更新する
+    this.setState({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
+    });
+  }
+
   render() {
     const history = this.state.history;
-    const current = history[history.length - 1];
+    const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
@@ -89,8 +99,9 @@ class Game extends React.Component {
         'Go to move #' + move :
         'Go to start';
       return (
-        <li>
-          <button onClick={() => this.jumpTO(move)}>{decs}</button>
+        // moveはこのリストにおいて一意のものなのでkeyの値にできる
+        <li key={move}>
+          <button onClick={() => this.jumpTo(move)}>{decs}</button>
         </li>
       );
     });
