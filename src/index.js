@@ -5,8 +5,9 @@ import './index.css';
 class Square extends React.Component {
   render() {
     return (
+      // 渡されたpropsからvalueを表示している
       <button className="square">
-        {/* TODO */}
+        {this.props.value}
       </button>
     );
   }
@@ -14,7 +15,8 @@ class Square extends React.Component {
 
 class Board extends React.Component {
   renderSquare(i) {
-    return <Square />;
+    // ここでprops として value という名前の値を Square に渡すようにしている
+    return <Square value={i}/>;
   }
 
   render() {
