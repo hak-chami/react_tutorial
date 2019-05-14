@@ -73,6 +73,8 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([{
         squares: squares,
+        col: (i % 3) + 1,
+        row: Math.floor(i / 3) + 1,
       }]),
       stepNumber: history.length,
       // 真偽値を逆に更新する
@@ -96,8 +98,8 @@ class Game extends React.Component {
     const moves = history.map((step, move) => {
       // moveがない場合はGo to startを表示する
       const decs = move ?
-        'Go to move #' + move :
-        'Go to start';
+        `Go to move #${move}（col: ${step.col}, row: ${step.row}）`:
+        `Go to start`;
       return (
         // moveはこのリストにおいて一意のものなのでkeyの値にできる
         <li key={move}>
@@ -108,9 +110,9 @@ class Game extends React.Component {
 
     let status;
     if (winner) {
-      status = 'Winner: ' + winner; 
+      status = `Winner: ${winner}`; 
     } else {
-      status = 'Next player:' + (this.state.xIsNext ? 'X' : 'O');
+      status = `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
     }
 
     return (
