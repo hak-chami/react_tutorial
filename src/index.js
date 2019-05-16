@@ -21,29 +21,44 @@ class Board extends React.Component {
               value={ this.props.squares[i] }
               // onClickが呼ばれた時にhandleClickという関数を呼び出す
               onClick={ () => this.props.onClick(i) }
+              key={i}
             />;
   }
 
-  render() {
-    return (
-      <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
+render() {
+  // 一辺が何マスの盤面を作るか
+  const boardSideLength = 3;
+  // boardSideLengthから盤面のsquareの数を出して0から始まる配列にする
+  const boardSquares = [...Array(boardSideLength ** 2).keys()];
+  // 配列からrowごとのまとまりを作る
+  const boardSquaresList = boardSquares.reduce((square, i) => {
+    const lastSquare = square[square.length - 1];
+    if (lastSquare.length === boardSideLength) {
+      square.push([i]);
+      return square;
+    }
+    lastSquare.push(i);
+    return square;
+  }, [[]]);
+  return (
+    <div>
+      { 
+        boardSquaresList.map((rowSquares, i) => {
+          return(
+            <div className="board-row" key={i}>
+              {
+                rowSquares.map((square) =>{
+                  return(
+                    this.renderSquare(square)
+                  )
+                })
+              }
+            </div>
+          )
+        })
+      }
+    </div>
+  );
   }
 }
 
@@ -103,7 +118,9 @@ class Game extends React.Component {
       return (
         // moveはこのリストにおいて一意のものなのでkeyの値にできる
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{decs}</button>
+          <button onClick={() => this.jumpTo(move)}>
+            { move === this.state.stepNumber ? <strong>{decs}</strong> : decs }
+          </button>
         </li>
       );
     });
