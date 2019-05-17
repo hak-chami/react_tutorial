@@ -72,6 +72,7 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
+      isAsc: true,
     };
   }
 
@@ -97,6 +98,12 @@ class Game extends React.Component {
     });
   }
 
+  handleOrder() {
+    this.setState({
+      isAsc: !this.state.isAsc,
+    });
+  }
+
   jumpTo(step) {
     // 実行されたらsetStateでstateを更新する
     this.setState({
@@ -112,14 +119,14 @@ class Game extends React.Component {
 
     const moves = history.map((step, move) => {
       // moveがない場合はGo to startを表示する
-      const decs = move ?
+      const item = move ?
         `Go to move #${move}（col: ${step.col}, row: ${step.row}）`:
         `Go to start`;
       return (
         // moveはこのリストにおいて一意のものなのでkeyの値にできる
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>
-            { move === this.state.stepNumber ? <strong>{decs}</strong> : decs }
+            { move === this.state.stepNumber ? <strong>{item}</strong> : item }
           </button>
         </li>
       );
@@ -132,6 +139,8 @@ class Game extends React.Component {
       status = `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
     }
 
+    const orderBottun = this.state.isAsc ? '↑OLD NEW↓' : '↑NEW OLD↓';
+
     return (
       <div className="game">
         <div className="game-board">
@@ -143,7 +152,14 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <div>
+            <button onClick={() => this.handleOrder()}>
+              {orderBottun}
+            </button>
+          </div>
+          <ol>
+            { this.state.isAsc ? moves : moves.reverse() }
+          </ol>
         </div>
       </div>
     );
