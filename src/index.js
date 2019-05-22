@@ -7,7 +7,12 @@ function Square(props) {
   return (
     // onClickでクリックされた時のイベントを定義
     // クリックされた時に親のonClickを呼び出すようにする
-    <button className="square" onClick={props.onClick}>
+    <button
+      className={
+        props.isHighlight ? `square highlight-color` : `square`
+        }
+      onClick={props.onClick}
+    >
       {props.value}
     </button>
   );
@@ -21,10 +26,11 @@ class Board extends React.Component {
               value={ this.props.squares[i] }
               // onClickが呼ばれた時にhandleClickという関数を呼び出す
               onClick={ () => this.props.onClick(i) }
+              // 渡って来た配列（勝ちに判定がでたline）に i が含まれているかどうか
+              isHighlight={ this.props.winLine.includes(i) }
               key={i}
             />;
   }
-
 render() {
   // 一辺が何マスの盤面を作るか
   const boardSideLength = 3;
@@ -80,6 +86,8 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+
+    // calculateWinnerの結果もしくはsquares[i]があれば以降の処理は行わない（クリックしても反応しない）
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
@@ -115,7 +123,7 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const winnerInfo = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
       // moveがない場合はGo to startを表示する
@@ -133,21 +141,24 @@ class Game extends React.Component {
     });
 
     let status;
-    if (winner) {
-      status = `Winner: ${winner}`; 
+    let winLine = [];
+    if (winnerInfo) {
+      status = `Winner: ${winnerInfo.player}`; 
+      winLine = winnerInfo.line;
     } else {
       status = `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
     }
 
     const orderBottun = this.state.isAsc ? '↑OLD NEW↓' : '↑NEW OLD↓';
-
     return (
       <div className="game">
         <div className="game-board">
           <Board
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
-          />
+            // 勝ち判定が出た場合勝ちにつながったlineが配列ではいる
+            winLine={winLine}
+      />
 
         </div>
         <div className="game-info">
@@ -187,7 +198,8 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      // 勝ったプレイヤーと勝ちにつながったラインをreturnする
+      return { player: squares[a], line: [a, b, c] };
     }
   }
   return null;

@@ -17,8 +17,11 @@ ol, ul {
   margin-bottom: 10px;
 }
 
+.highlight-color {
+  background: #ff3399;
+}
+
 .square {
-  background: #fff;
   border: 1px solid #999;
   float: left;
   font-size: 24px;
@@ -48,3 +51,4 @@ ol, ul {
 .game-info {
   margin-left: 20px;
 }
+
