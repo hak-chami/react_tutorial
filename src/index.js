@@ -142,11 +142,13 @@ class Game extends React.Component {
 
     let status;
     let winLine = [];
-    if (winnerInfo) {
+    if (winnerInfo === null) {
+      status = `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
+    } else if (winnerInfo === 'draw') {
+      status = `Draw`; 
+    } else {
       status = `Winner: ${winnerInfo.player}`; 
       winLine = winnerInfo.line;
-    } else {
-      status = `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
     }
 
     const orderBottun = this.state.isAsc ? '↑OLD NEW↓' : '↑NEW OLD↓';
@@ -201,6 +203,10 @@ function calculateWinner(squares) {
       // 勝ったプレイヤーと勝ちにつながったラインをreturnする
       return { player: squares[a], line: [a, b, c] };
     }
+  }
+  // ここでDraw判定
+  if (!squares.includes(null)) {
+    return 'draw';
   }
   return null;
 }
